@@ -15,7 +15,11 @@ con.sql("""
         id                            AS match_id,
         season,
         TRY_CAST(date AS DATE)        AS match_date,
-        venue,
+        CASE
+            WHEN venue LIKE 'Wankhede%' THEN 'Wankhede Stadium, Mumbai'
+            WHEN venue LIKE 'MA Chidambaram%' THEN 'MA Chidambaram Stadium, Chennai'
+            ELSE venue
+        END                           AS venue,
         team1,
         team2,
         toss_winner,
@@ -24,6 +28,7 @@ con.sql("""
         (toss_winner = winner)        AS toss_winner_won
     FROM raw_matches
     WHERE winner IS NOT NULL
+      AND winner IN (team1, team2)
 """)
 
 print(con.sql("""
